@@ -8,11 +8,14 @@ import (
 	"runtime"
 	"strings"
 	"bytes"
+
+	"github.com/davecgh/go-spew/spew"
 )
 
 const (
 	ERROR = "com.jfixby.scarabei.log.error"
-	DEBUG = "com.jfixby.scarabei.log.log"
+	DEBUG = "com.jfixby.scarabei.log.debug"
+	SPEW  = "com.jfixby.scarabei.log.spew"
 )
 
 var indent = strconv.Itoa(24)
@@ -39,6 +42,10 @@ func D(tag string, message ...interface{}) {
 	log(DEBUG, tag, message...)
 }
 
+func S(tag string, message ...interface{}) {
+	log(SPEW, tag, message...)
+}
+
 func E(tag string, message ...interface{}) {
 	log(ERROR, tag, message...)
 }
@@ -51,6 +58,10 @@ func Debug(tag string, message ...interface{}) {
 	log(DEBUG, tag, message...)
 }
 
+func Spew(tag string, message ...interface{}) {
+	log(SPEW, tag, message...)
+}
+
 func log(mode string, tag string, message ...interface{}) {
 	var a interface{} = nil
 	if len(message) > 0 {
@@ -61,8 +72,10 @@ func log(mode string, tag string, message ...interface{}) {
 		msg := decorate(tag)
 		if mode == DEBUG {
 			LogPrinter.Debug(msg)
-		} else {
+		} else if mode == ERROR {
 			LogPrinter.Error(msg)
+		} else {
+			LogPrinter.Debug(msg)
 		}
 		return
 	}
@@ -74,16 +87,27 @@ func log(mode string, tag string, message ...interface{}) {
 		msg = decorate(msg)
 		if mode == DEBUG {
 			LogPrinter.Debug(msg)
-		} else {
+		} else if mode == ERROR {
 			LogPrinter.Error(msg)
+		} else {
+			LogPrinter.Debug(msg)
 		}
 	} else {
-		msg := fmt.Sprintf("%v > %v", tag, a)
-		msg = decorate(msg)
 		if mode == DEBUG {
+			msg := fmt.Sprintf("%v > %v", tag, a)
+			msg = decorate(msg)
+
 			LogPrinter.Debug(msg)
-		} else {
+		} else if mode == ERROR {
+			msg := fmt.Sprintf("%v > %v", tag, a)
+			msg = decorate(msg)
+
 			LogPrinter.Error(msg)
+		} else { //spew
+			msg := fmt.Sprintf("%v > %v", tag, spew.Sdump(a))
+			msg = decorate(msg)
+
+			LogPrinter.Debug(msg)
 		}
 	}
 }
