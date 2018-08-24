@@ -83,13 +83,17 @@ func log(mode string, tag string, message ...interface{}) {
 	// a!=nil
 	array := reflect.ValueOf(a)
 	if array.Kind() == reflect.Array || array.Kind() == reflect.Slice {
-		msg := ArrayToString(tag, a)
-		msg = decorate(msg)
 		if mode == DEBUG {
+			msg := ArrayToString(tag, a)
+			msg = decorate(msg)
 			LogPrinter.Debug(msg)
 		} else if mode == ERROR {
+			msg := ArrayToString(tag, a)
+			msg = decorate(msg)
 			LogPrinter.Error(msg)
 		} else {
+			msg := "<" + tag + ">:\n" + spew.Sdump(a)
+			msg = decorate(msg)
 			LogPrinter.Debug(msg)
 		}
 	} else {
