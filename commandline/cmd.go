@@ -1,4 +1,3 @@
-
 package commandline
 
 import "fmt"
@@ -22,7 +21,9 @@ func ArgumentsToStringArray(args map[string]interface{}) []string {
 	var result []string
 	for key, value := range args {
 		if value == NoArgument || value == NoArgumentNil {
-			// skip key
+			// skip value
+		} else if key == NoArgument {
+			// skip value
 		} else if value == NoArgumentValue {
 			// --%key%
 			str := fmt.Sprintf("--%s", key)
