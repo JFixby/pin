@@ -1,4 +1,3 @@
-
 package commandline
 
 import (
@@ -8,7 +7,6 @@ import (
 	"os/exec"
 	"runtime"
 	"strings"
-
 )
 
 // ExternalProcess is a helper class wrapping command line execution
@@ -110,6 +108,11 @@ func (process *ExternalProcess) waitForExit() {
 // IsRunning indicates when ext process is working
 func (process *ExternalProcess) IsRunning() bool {
 	return process.isRunning
+}
+
+func (process *ExternalProcess) Wait() error {
+	cmd := process.runningCommand
+	return cmd.Wait()
 }
 
 // On windows, interrupt is not supported, so a kill signal is used instead.
