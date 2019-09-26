@@ -1,15 +1,15 @@
 package fileops
 
 import (
+	"fmt"
+	"github.com/jfixby/pin"
 	"github.com/jfixby/pin/lang"
 	"github.com/jfixby/pin/str"
-	"os"
-	"github.com/jfixby/pin"
-	"strings"
-	"io/ioutil"
 	"io"
+	"io/ioutil"
+	"os"
 	"path/filepath"
-	"fmt"
+	"strings"
 )
 
 const DIRECT_CHILDREN = true
@@ -189,6 +189,32 @@ func Copy(from string, to string) {
 	ensureParent(to)
 	_, err := copy(from, to)
 	lang.CheckErr(err)
+}
+
+func CopyFolderContentToFolder(from string, to string, filter FileFilter, directChildren bool) {
+	pin.D("copy", from)
+	pin.D("  to", to)
+	inputFiles := ListFiles(from, filter, directChildren)
+	//pin.D("inputFiles", inputFiles)
+	for _, f := range inputFiles {
+		postfix := strings.TrimPrefix(f, from)
+		//pin.D("postfix", postfix)
+		newpath := filepath.Join(to, postfix)
+		//pin.D("newpath", newpath)
+		if IsFolder(f) {
+			err := os.MkdirAll(newpath, 0700)
+			lang.CheckErr(err)
+			pin.D("make", newpath)
+			continue
+		}
+		if IsFile(f) {
+			if IsFolder(f) {
+				lang.ReportErr("This is not a file: %v", from)
+			}
+			Copy(f, newpath)
+			continue
+		}
+	}
 }
 
 func copy(src, dst string) (int64, error) {
