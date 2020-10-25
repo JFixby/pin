@@ -10,10 +10,20 @@ type StateChecker interface {
 	CheckStateIsNot(state string)
 	SwitchState(nextState string)
 	SwitchStateFromTo(stateFrom, stateTo string)
+	Current() string
+	CurrentIs(state string) bool
 }
 
 type basicStateChecker struct {
 	state string
+}
+
+func (b *basicStateChecker) CurrentIs(state string) bool {
+	return b.state==state
+}
+
+func (b *basicStateChecker) Current() string {
+	return b.state
 }
 
 func (b *basicStateChecker) CheckStateIs(state string) {
